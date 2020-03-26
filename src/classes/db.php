@@ -1,12 +1,17 @@
 <?php
 
 /**
- * classes/db.php
+ * src/classes/db.php
  *
  * @package default
  */
 
 
+/**
+ * classes/db.php
+ *
+ * @package default
+ */
 class DB
 {
 
@@ -144,8 +149,8 @@ class DB
   /**
    *
    * @param string  $table
-   * @param array   $colname (optional)
-   * @param array   $data    (optional)
+   * @param array   $where (optional)
+   * @param array   $data  (optional)
    * @return unknown
    */
   public static function update(string $table, array $where = [], array $data = [])
@@ -170,7 +175,7 @@ class DB
   /**
    *
    * @param string  $table
-   * @param array   $colname (optional)
+   * @param array   $where (optional)
    * @return unknown
    */
   public static function delete(string $table, array $where = [])
