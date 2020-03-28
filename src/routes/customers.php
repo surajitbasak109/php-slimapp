@@ -4,8 +4,6 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use Valitron\Validator as validate;
 
-$app = new \Slim\App;
-
 // Get all customers
 $app->get('/api/customers', function (Request $request, Response $response, array $args) {
   $customers = DB::select('customers', "*")
@@ -33,21 +31,32 @@ $app->post('/api/customers', function (Request $request, Response $response, arr
     ->rule('email', 'email');
   if ($v->validate()) {
     DB::insert('customers', $data);
-    echo json_encode(['status' => true, 'message' => "Customer added", 'data' => $data]);
+    $message = ['status' => true, 'message' => "Customer added", 'data' => $data];
+    $newResponse = $response->withJson($message, 200);
   } else {
-    echo json_encode(['status' => false, 'errors' => $v->errors()]);
+    $message = ['status' => false, 'errors' => $v->errors()];
+    $newResponse = $response->withJson($message, 400);
   }
+  return $newResponse;
 });
 
 // Update a customer
 $app->put('/api/customers/{id}', function (Request $request, Response $response, array $args) {
   $id = $request->getAttribute('id');
   $data = $request->getParsedBody();
-  DB::update('customers', ['id' => $id], $data);
 
-  $customer = DB::select_where('customers', '*', ['id' => $id])
-    ->fetch();
-  echo json_encode(['status' => true, 'message' => "Customer updated", 'data' => $customer]);
+  if (!empty($data)) {
+    DB::update('customers', ['id' => $id], $data);
+    $customer = DB::select_where('customers', '*', ['id' => $id])
+      ->fetch();
+    $message = ['status' => true, 'message' => "Customer updated", 'data' => $customer];
+    $newResponse = $response->withJson($message, 200);
+  } else {
+    $message = ['status' => false, 'errors' => ['general_error' => 'Nothing to update.']];
+    $newResponse = $response->withJson($message, 400);
+  }
+
+  return $newResponse;
 });
 
 

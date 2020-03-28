@@ -1,6 +1,7 @@
 {
     "require": {
         "slim/slim": "3.*",
-        "vlucas/valitron": "^1.4"
+        "vlucas/valitron": "^1.4",
+        "monolog/monolog": "^2.0"
     }
 }
