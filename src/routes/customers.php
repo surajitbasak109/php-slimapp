@@ -15,10 +15,16 @@ $app->get('/api/customers', function (Request $request, Response $response, arra
 // Get single customer
 $app->get('/api/customers/{id}', function (Request $request, Response $response, array $args) {
   $id = $request->getAttribute('id');
-  $customer = DB::select_where('customers', '*', ['id' => $id])
-    ->fetch();
-  $data = json_encode($customer);
-  echo $data;
+  $customer = DB::select_where('customers', '*', ['id' => $id]);
+  if ($customer->rowCount() > 0) {
+    $data = $customer->fetch();
+    $newResponse = $response->withJson($data, 200);
+  } else {
+    $data = ['errors' => ['general_error' => 'Customer does not exist']];
+    $newResponse = $response->withJson($data, 404);
+  }
+
+  return $newResponse;
 });
 
 
